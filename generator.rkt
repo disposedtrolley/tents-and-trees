@@ -21,5 +21,15 @@
       (display (format "~a  " cell)))
     (display "\n\n")))
 
+;; Fills a cell on the board at the given column and row with a new
+;; cell type.
+(define (fill-cell board col row cell-type)
+  (define row-to-update (list-ref board row))
+  (define new-row (list-set row-to-update col cell-type))
+  (define new-board (list-set board row new-row))
+  new-board)
 
 (pretty-print-board board)
+(fill-cell board 0 0 tent)
+(define new-board (fill-cell board 0 0 tent))
+(pretty-print-board new-board)
