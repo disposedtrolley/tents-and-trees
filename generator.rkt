@@ -4,10 +4,11 @@
 (define n 5)
 
 ;; Symbols for different kinds of cells.
-(define tent "⛺️")
-(define tree "🌳")
-(define grass "G")
-(define mud "X")
+(struct cell-type (display-char large?))
+(define tent (cell-type "⛺️" #t))
+(define tree (cell-type "🌳" #t))
+(define grass (cell-type "G" #f))
+(define mud (cell-type "X" #f))
 
 ;; Create a board of n*n cells, initialised to a default value.
 (define board (for/list ([i n])
@@ -18,7 +19,9 @@
 (define (pretty-print-board board)
   (for ([row board])
     (for ([cell row])
-      (display (format "~a  " cell)))
+      (display (format
+                (if (cell-type-large? cell) "~a " "~a  ")
+                (cell-type-display-char cell))))
     (display "\n\n")))
 
 ;; Fills a cell on the board at the given column and row with a new
