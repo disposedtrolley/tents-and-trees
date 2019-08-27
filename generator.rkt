@@ -36,6 +36,10 @@
   (define new-board (list-set board row new-row))
   new-board)
 
+;; Returns #t if list contains val, otherwise #f.
+(define (contains list val)
+  (not (false? (member val list))))
+
 ;; Fills the board with n number of trees.
 (define (fill-trees board n)
   (define board-n (length board))
