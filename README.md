@@ -31,3 +31,10 @@ The score is based on the minimum number of moves (`fill`s) used to satisfy the 
 * `Tree`s are the first type of `fill` to be made to `cell`s of the board. Trees can be placed randomly given the following constraints are made:
   1. Each `tree` must have at least one unfilled `cell` horizontally or vertically adjacent to it, allowing gameplay constraints #2 and #3 to be satisfied
   2. In a cluster of `tree`s, no more than one `tree` can have just a single horizontally or vertically unfilled cell
+## Setup
+
+### Prerequisites
+
+* Racket 7.3
+* `while-loop`
+  * `raco pkg install while-loop`
