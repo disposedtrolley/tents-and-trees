@@ -1,7 +1,11 @@
 #lang racket
+(require dyoo-while-loop)
 
+;; CONFIGURATION
 ;; The number of rows and columns to generate.
 (define n 5)
+;; The number of trees to generate.
+(define n-trees 10)
 
 ;; Symbols for different kinds of cells.
 (struct cell (display-char large?))
@@ -32,7 +36,30 @@
   (define new-board (list-set board row new-row))
   new-board)
 
+;; Fills the board with n number of trees.
+(define (fill-trees board n)
+  (define board-n (length board))
+  (for ([i n])
+    (define placed #f)
+    (while (not placed)
+      ;; Continue to randomly choose a location for the tree until a valid cell is chosen.
+      (define col (random board-n))
+      (define row (random board-n))
+
+      (define row-to-update (list-ref board row))
+
+      (define horizontal-spaces (count identity
+                                       '((member (list-ref row-to-update (- col 1)) '(mud grass))
+                                         (member (list-ref row-to-update (+ col 1)) '(mud grass)))))
+
+      (display horizontal-spaces)
+      (set! placed #t)
+      )
+    )
+  )
+
 (pretty-print-board board)
 (fill-cell board 0 0 tent)
 (define new-board (fill-cell board 0 0 tent))
 (pretty-print-board new-board)
+(fill-trees new-board n-trees)
