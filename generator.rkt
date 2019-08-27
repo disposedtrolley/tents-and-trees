@@ -40,6 +40,10 @@
 (define (contains list val)
   (not (false? (member val list))))
 
+;; Returns whether a cell is available. A cell is available if it can be filled with a tent.
+(define (cell-available? cell)
+  (contains (list (cell-display-char mud) (cell-display-char grass)) (cell-display-char cell)))
+
 ;; Fills the board with n number of trees.
 (define (fill-trees board n)
   (define board-n (length board))
@@ -47,14 +51,17 @@
     (define placed #f)
     (while (not placed)
       ;; Continue to randomly choose a location for the tree until a valid cell is chosen.
-      (define col (random board-n))
-      (define row (random board-n))
+      ;;(define col (random board-n))
+      ;;(define row (random board-n))
+      (define col 0)
+      (define row 0)
 
       (define row-to-update (list-ref board row))
 
-      (define horizontal-spaces (count identity
-                                       '((member (list-ref row-to-update (- col 1)) '(mud grass))
-                                         (member (list-ref row-to-update (+ col 1)) '(mud grass)))))
+      (define horizontal-spaces
+        (count identity
+               (list (if (> col 0) (cell-available? (list-ref row-to-update (- col 1))) #f)
+                     (if (< col (- board-n 1)) (cell-available? (list-ref row-to-update (+ col 1))) #f))))
 
       (display horizontal-spaces)
       (set! placed #t)
@@ -63,7 +70,4 @@
   )
 
 (pretty-print-board board)
-(fill-cell board 0 0 tent)
-(define new-board (fill-cell board 0 0 tent))
-(pretty-print-board new-board)
-(fill-trees new-board n-trees)
+(fill-trees board n-trees)
