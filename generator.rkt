@@ -3,7 +3,7 @@
 
 ;; CONFIGURATION
 ;; The number of rows and columns to generate.
-(define n 5)
+(define board-size 5)
 ;; The number of trees to generate.
 (define n-trees 10)
 
@@ -15,8 +15,8 @@
 (define mud (cell "X" #f))
 
 ;; Create a board of n*n cells, initialised to a default value.
-(define board (for/list ([i n])
-                (for/list ([j n])
+(define board (for/list ([i board-size])
+                (for/list ([j board-size])
                   mud)))
 
 ;; Pretty-prints the board with extra spacing between cells.
