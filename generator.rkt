@@ -54,7 +54,7 @@
       ;;(define col (random board-n))
       ;;(define row (random board-n))
       (define col 0)
-      (define row 0)
+      (define row 1)
 
       (define row-to-update (list-ref board row))
 
@@ -62,8 +62,13 @@
         (count identity
                (list (if (> col 0) (cell-available? (list-ref row-to-update (- col 1))) #f)
                      (if (< col (- board-n 1)) (cell-available? (list-ref row-to-update (+ col 1))) #f))))
+      (define vertical-spaces
+        (count identity
+               (list (if (> row 0) (cell-available? (list-ref (list-ref board (- row 1)) col)) #f)
+                     (if (< row (- board-n 1)) (cell-available? (list-ref (list-ref board (+ row 1)) col)) #f))))
 
       (display horizontal-spaces)
+      (display vertical-spaces)
       (set! placed #t)
       )
     )
