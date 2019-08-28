@@ -5,7 +5,7 @@
 ;; The number of rows and columns to generate.
 (define board-size 5)
 ;; The number of trees to generate.
-(define n-trees 10)
+(define n-trees 5)
 
 ;; Symbols for different kinds of cells.
 (struct cell (display-char large?))
@@ -51,10 +51,8 @@
     (define placed #f)
     (while (not placed)
       ;; Continue to randomly choose a location for the tree until a valid cell is chosen.
-      ;;(define col (random board-n))
-      ;;(define row (random board-n))
-      (define col 0)
-      (define row 1)
+      (define col (random board-n))
+      (define row (random board-n))
 
       (define row-to-update (list-ref board row))
 
@@ -67,12 +65,18 @@
                (list (if (> row 0) (cell-available? (list-ref (list-ref board (- row 1)) col)) #f)
                      (if (< row (- board-n 1)) (cell-available? (list-ref (list-ref board (+ row 1)) col)) #f))))
 
-      (display horizontal-spaces)
-      (display vertical-spaces)
-      (set! placed #t)
-      )
-    )
-  )
+      (displayln (format "C~aR~a HS: ~a VS: ~a" col row horizontal-spaces vertical-spaces))
 
+      (set! placed
+            (if (or (> horizontal-spaces 0)
+                    (> vertical-spaces 0))
+                (begin
+                  (set! board (fill-cell board col row tree))
+                  #t)
+                #f))))
+  board)
+
+      
 (pretty-print-board board)
-(fill-trees board n-trees)
+(define filled-board (fill-trees board n-trees))
+(pretty-print-board filled-board)
