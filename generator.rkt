@@ -46,37 +46,40 @@
 
 ;; Fills the board with n number of trees.
 (define (fill-trees board n)
-  (define board-n (length board))
-  (for ([i n])
-    (define placed #f)
-    (while (not placed)
-      ;; Continue to randomly choose a location for the tree until a valid cell is chosen.
-      (define col (random board-n))
-      (define row (random board-n))
+  (cond
+    [(< n 0) board]
+    [else
+      (define board-n (length board))
+      (define placed #f)
+      (while (not placed)
+        ;; Continue to randomly choose a location for the tree until a valid cell is chosen.
+        (define col (random board-n))
+        (define row (random board-n))
 
-      (define row-to-update (list-ref board row))
+        (define row-to-update (list-ref board row))
 
-      (define horizontal-spaces
-        (count identity
-               (list (if (> col 0) (cell-available? (list-ref row-to-update (- col 1))) #f)
-                     (if (< col (- board-n 1)) (cell-available? (list-ref row-to-update (+ col 1))) #f))))
-      (define vertical-spaces
-        (count identity
-               (list (if (> row 0) (cell-available? (list-ref (list-ref board (- row 1)) col)) #f)
-                     (if (< row (- board-n 1)) (cell-available? (list-ref (list-ref board (+ row 1)) col)) #f))))
+        (define horizontal-spaces
+          (count identity
+                 (list (if (> col 0) (cell-available? (list-ref row-to-update (- col 1))) #f)
+                       (if (< col (- board-n 1)) (cell-available? (list-ref row-to-update (+ col 1))) #f))))
+        (define vertical-spaces
+          (count identity
+                 (list (if (> row 0) (cell-available? (list-ref (list-ref board (- row 1)) col)) #f)
+                       (if (< row (- board-n 1)) (cell-available? (list-ref (list-ref board (+ row 1)) col)) #f))))
 
-      (displayln (format "C~aR~a HS: ~a VS: ~a" col row horizontal-spaces vertical-spaces))
+        (displayln (format "C~aR~a HS: ~a VS: ~a" col row horizontal-spaces vertical-spaces))
 
-      (set! placed
-            (if (or (> horizontal-spaces 0)
-                    (> vertical-spaces 0))
-                (begin
-                  (set! board (fill-cell board col row tree))
-                  #t)
-                #f))))
-  board)
+        (set! placed
+              (if (or (> horizontal-spaces 0)
+                      (> vertical-spaces 0))
+                  (begin
+                    (set! board (fill-cell board col row tree))
+                    #t)
+                  #f)))
+      (fill-trees board (- n 1))]))
 
-      
+
+
 (pretty-print-board board)
 (define filled-board (fill-trees board n-trees))
 (pretty-print-board filled-board)
