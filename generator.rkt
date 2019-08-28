@@ -5,7 +5,7 @@
 ;; The number of rows and columns to generate.
 (define board-size 5)
 ;; The number of trees to generate.
-(define n-trees 5)
+(define n-trees 10)
 
 ;; Symbols for different kinds of cells.
 (struct cell (display-char large?))
@@ -47,7 +47,7 @@
 ;; Fills the board with n number of trees.
 (define (fill-trees board n)
   (cond
-    [(< n 0) board]
+    [(= n 0) board]
     [else
       (define board-n (length board))
       (define placed #f)
@@ -58,24 +58,23 @@
 
         (define row-to-update (list-ref board row))
 
-        (define horizontal-spaces
-          (count identity
+        ;; Verify the chosen cell is free to be filled with a tree.
+        (cond
+          [(cell-available? (list-ref row-to-update col))
+           (define horizontal-spaces
+             (count identity
                  (list (if (> col 0) (cell-available? (list-ref row-to-update (- col 1))) #f)
                        (if (< col (- board-n 1)) (cell-available? (list-ref row-to-update (+ col 1))) #f))))
-        (define vertical-spaces
-          (count identity
+           (define vertical-spaces
+             (count identity
                  (list (if (> row 0) (cell-available? (list-ref (list-ref board (- row 1)) col)) #f)
                        (if (< row (- board-n 1)) (cell-available? (list-ref (list-ref board (+ row 1)) col)) #f))))
-
-        (displayln (format "C~aR~a HS: ~a VS: ~a" col row horizontal-spaces vertical-spaces))
-
-        (set! placed
-              (if (or (> horizontal-spaces 0)
-                      (> vertical-spaces 0))
-                  (begin
-                    (set! board (fill-cell board col row tree))
-                    #t)
-                  #f)))
+           (cond
+             [(or (> horizontal-spaces 0)
+                  (> vertical-spaces 0))
+              (displayln (format "C~aR~a HS: ~a VS: ~a" col row horizontal-spaces vertical-spaces))
+              (set! board (fill-cell board col row tree))
+              (set! placed #t)])]))
       (fill-trees board (- n 1))]))
 
 
