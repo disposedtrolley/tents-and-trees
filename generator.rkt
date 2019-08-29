@@ -12,7 +12,7 @@
 (define tent (cell "⛺" #t))
 (define tree (cell "🌳" #t))
 (define grass (cell "G" #f))
-(define mud (cell "X" #f))
+(define mud (cell "💩" #t))
 
 ;; Create a board of n*n cells, initialised to a default value.
 (define board (for/list ([i board-size])
