@@ -44,37 +44,43 @@
 (define (cell-available? cell)
   (contains (list (cell-display-char mud) (cell-display-char grass)) (cell-display-char cell)))
 
-
+(define (tree-position-valid? board col row)
+  (define row-to-update (list-ref board row))
+  (cond
+    [(cell-available? (list-ref row-to-update col))
+     ;; @TODO maintain a list of adjacent cells rather than counts of horizontal and vertical free cells
+     ;; should be a list of structs where each struct contains the cell type and direction. We can use
+     ;; this representation to determine if a tree is part of a cluster to enforce special constraints
+     (define horizontal-spaces
+       (count identity
+           (list (if (> col 0) (cell-available? (list-ref row-to-update (- col 1))) #f)
+                 (if (< col (- board-size 1)) (cell-available? (list-ref row-to-update (+ col 1))) #f))))
+     (define vertical-spaces
+       (count identity
+           (list (if (> row 0) (cell-available? (list-ref (list-ref board (- row 1)) col)) #f)
+                 (if (< row (- board-size 1)) (cell-available? (list-ref (list-ref board (+ row 1)) col)) #f))))
+     (displayln (format "C~aR~a HS: ~a VS: ~a" col row horizontal-spaces vertical-spaces))
+     (or [> horizontal-spaces 0]
+         [> vertical-spaces 0])]
+    [else #f]))
+  
 (define (fill-trees-helper board selections)
   (cond
     [(= (length selections) n-trees) board] 
     [else
      (define col (random board-size))
      (define row (random board-size))
-     (define row-to-update (list-ref board row))
 
-     ;; Verify the chosen cell is free to be filled with a tree.
      (cond
-       [(cell-available? (list-ref row-to-update col))
-        (define horizontal-spaces
-          (count identity
-              (list (if (> col 0) (cell-available? (list-ref row-to-update (- col 1))) #f)
-                    (if (< col (- board-size 1)) (cell-available? (list-ref row-to-update (+ col 1))) #f))))
-        (define vertical-spaces
-          (count identity
-              (list (if (> row 0) (cell-available? (list-ref (list-ref board (- row 1)) col)) #f)
-                    (if (< row (- board-size 1)) (cell-available? (list-ref (list-ref board (+ row 1)) col)) #f))))
-        (cond
-          [(or (> horizontal-spaces 0)
-               (> vertical-spaces 0))
-           (displayln (format "C~aR~a HS: ~a VS: ~a" col row horizontal-spaces vertical-spaces))
-           (set! board (fill-cell board col row tree))
-           (set! selections (append selections (list (cons col row))))
-           (displayln selections)]
-          [else
-           (set! selections (take selections (- (length selections) 1)))
-           (set! board (fill-cell board col row mud))])])
+       [(tree-position-valid? board col row)
+        (set! board (fill-cell board col row tree))
+        (set! selections (append selections (list (cons col row))))
+        (displayln selections)]
+       [else
+        (set! selections (take selections (- (length selections) 1)))
+        (set! board (fill-cell board col row mud))])
      (fill-trees-helper board selections)]))
+
 
 ;; Fills the board with n number of trees.
 (define (fill-trees board)
